@@ -23,4 +23,7 @@ build:
 	  --build-arg REGION=$(AWS_REGION) \
 	.
 
+run:
+	docker run -it --rm -p 16925:16925 metamock
+
 include $(wildcard make.include/*.mk)
