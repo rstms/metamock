@@ -24,7 +24,7 @@ def write_config(
     output.write(f"access_key={access_key}\n")
     output.write(f"secret_key={secret_key}\n")
     output.write(f"region={region}\n")
-    output.write("mfa_enabled={mfa_enabled}\n")
+    output.write(f"mfa_enabled={mfa_enabled}\n")
     output.write(optional("mfa_secret", mfa_secret))
     output.write(optional("mfa_token_duration", mfa_token_duration))
     output.write(optional("mfa_role_arn", mfa_role_arn))

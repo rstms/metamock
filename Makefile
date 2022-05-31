@@ -16,4 +16,11 @@ dev: uninstall
 clean: 
 	for clean in $(call included,clean); do ${MAKE} $$clean; done
 
+build:
+	docker build --tag metamock \
+	  --build-arg ID=$(AWS_ACCESS_KEY_ID) \
+	  --build-arg KEY=$(AWS_SECRET_ACCESS_KEY) \
+	  --build-arg REGION=$(AWS_REGION) \
+	.
+
 include $(wildcard make.include/*.mk)
