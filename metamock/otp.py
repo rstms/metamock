@@ -47,7 +47,7 @@ class Totp(object):
             | (ord(hmac_hash[offset + 3]) & 0xFF)
         )
 
-        return code % 10 ** self.digits
+        return code % 10**self.digits
 
     def __timecode(self, at):
         return timestamp_to_bytestring(

@@ -1,29 +1,34 @@
 #!/usr/bin/env python
-import os
-import os.path
-
-OVERWRITE = True
 
 
-def write_config(access_key=None, secret_key=None, region=None):
-    metadata_dir = os.path.join(os.path.expanduser("~"), ".metamock")
+def optional(key, value):
+    if value:
+        return f"{key}={value}\n"
+    else:
+        return f"#{key}=...\n"
 
-    if not os.path.isdir(metadata_dir):
-        os.mkdir(metadata_dir)
 
-    key_map = {
-        "AWS_ACCESS_KEY_ID": "access_key",
-        "AWS_SECRET_ACCESS_KEY": "secret_key",
-        "AWS_REGION": "region",
-    }
-    config_file = os.path.join(metadata_dir, "config")
-    if OVERWRITE or not os.path.isfile(config_file):
-        ofp = open(config_file, "w")
-        ofp.write("[aws]\n")
-        for k, v in os.environ.items():
-            if k in key_map:
-                ofp.write(key_map[k] + "=" + v + "\n")
-        ofp.write("mfa_enabled=False\n")
-        ofp.write("[metadata]\n")
-        ofp.write("profile=default\n")
-        ofp.close
+def write_config(
+    output,
+    host,
+    port,
+    access_key,
+    secret_key,
+    region,
+    mfa_enabled,
+    mfa_secret,
+    mfa_token_duration,
+    mfa_role_arn,
+):
+    output.write("[aws]\n")
+    output.write(f"access_key={access_key}\n")
+    output.write(f"secret_key={secret_key}\n")
+    output.write(f"region={region}\n")
+    output.write("mfa_enabled={mfa_enabled}\n")
+    output.write(optional("mfa_secret", mfa_secret))
+    output.write(optional("mfa_token_duration", mfa_token_duration))
+    output.write(optional("mfa_role_arn", mfa_role_arn))
+    output.write("[metadata]\n")
+    output.write(f"host={host}\n")
+    output.write(f"port={port}\n")
+    output.write("profile=default\n")

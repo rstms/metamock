@@ -1,6 +1,5 @@
 from boto.exception import BotoServerError
-
-from .bottle import delete, post, request, response, route, view
+from bottle import delete, post, request, response, route, view
 
 
 @route("/latest/meta-data/local-hostname")
@@ -90,7 +89,7 @@ def get_identity_document():
 
 
 @route("/manage")
-@view("manage")
+@view("manage.tpl")
 def manage():
     metadata = request.app.config.meta_get("metadata", "obj")
 

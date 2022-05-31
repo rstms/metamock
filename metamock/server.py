@@ -1,35 +1,59 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
-import sys
 from pathlib import Path
 
-from .metadata import Metadata, Profile, bottle
+import bottle
 
-APP_DIR = Path(__file__).parent
-bottle.TEMPLATE_PATH.append(str(Path(APP_DIR) / "metadata" / "views"))
-DEFAULT_CONFIG_FILE = Path(APP_DIR) / "metamock.config"
-sys.path.append(APP_DIR)
+from . import routes  # noqa: F401
+from .metadata import Metadata, Profile
+
+DEFAULT_HOST = "0.0.0.0"
+DEFAULT_PORT = "80"
+USER_CONFIG_FILENAME = ".metamock.config"
+
+# config priority:
+# 1) cli argument (--config) (dict or file)
+# 2) ~/.metamock.config
+# 3) (MODULE_INSTALL_DIR)/default.config
 
 
 class Server:
-    def __init__(self, config, host, port, profile):
+    def __init__(self, config_file=None, profile=None, debug=False):
 
-        self.host = host
-        self.port = port
+        self.debug = debug
+
+        if debug:
+            bottle.debug(debug)
+
+        APP_DIR = Path(__file__).parent
+
+        VIEWS_DIR = APP_DIR / "views"
+        VIEWS_DIR.resolve(strict=True)
+        bottle.TEMPLATE_PATH.insert(0, str(VIEWS_DIR))
+
+        USER_CONFIG_FILE = Path.home() / USER_CONFIG_FILENAME
+        DEFAULT_CONFIG_FILE = APP_DIR / "default.config"
+
         self.profile = profile
 
         self.app = bottle.default_app()
 
-        self.app.config.load_config(config or DEFAULT_CONFIG_FILE)
+        config_file = config_file or USER_CONFIG_FILE
+        if not config_file.is_file():
+            config_file = DEFAULT_CONFIG_FILE
 
-        user_config = Path.home() / ".metamock" / "config"
-        if user_config.is_file():
-            self.app.config.load_config(str(user_config))
+        config_file.resolve(strict=True)
+        if debug:
+            print(f"{config_file=}")
+
+        self.app.config.load_config(str(config_file))
 
         profile_name = profile or self.app.config.get(
             "metadata.profile", "default"
         )
+        if debug:
+            print(f"{profile_name=}")
 
         self.app.config.meta_set(
             "metadata",
@@ -37,11 +61,20 @@ class Server:
             Metadata(self.parse_profiles(self.app.config), profile_name),
         )
 
-    def run(self):
+    def run(self, host, port, server):
+
+        default_host = self.app.config.get(
+            "metadata.host", DEFAULT_HOST
+        ).split()[0]
+        default_port = self.app.config.get(
+            "metadata.port", DEFAULT_PORT
+        ).split()[0]
+
         return self.app.run(
-            host=self.host
-            or self.app.config.get("metadata.host", "169.254.169.254"),
-            port=self.port or int(self.app.config.get("metadata.port", 45000)),
+            server=server or 'wsgiref',
+            debug=self.debug,
+            host=host or default_host,
+            port=int(port or default_port),
         )
 
     #    def port(self, value):
