@@ -71,7 +71,7 @@ class Server:
         ).split()[0]
 
         return self.app.run(
-            server=server or 'wsgiref',
+            server=server or "wsgiref",
             debug=self.debug,
             host=host or default_host,
             port=int(port or default_port),

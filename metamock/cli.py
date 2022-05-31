@@ -34,7 +34,6 @@ def cli(ctx, **kwargs):
 
     ctx.obj = Context(kwargs)
 
-
     def exception_handler(
         exception_type, exception, traceback, debug_hook=sys.excepthook
     ):
