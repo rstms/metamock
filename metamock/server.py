@@ -23,7 +23,7 @@ class Server:
 
         self.app.config.load_config(config or DEFAULT_CONFIG_FILE)
 
-        user_config = Path.home() / ".metamock"
+        user_config = Path.home() / ".metamock" / "config"
         if user_config.is_file():
             self.app.config.load_config(str(user_config))
 
