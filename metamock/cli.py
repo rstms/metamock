@@ -2,6 +2,7 @@
 
 import os
 import sys
+from pathlib import Path
 
 import click
 
@@ -17,7 +18,7 @@ header = f"{__name__.split('.')[0]} v{__version__} {__timestamp__}"
 @click.option(
     "-c",
     "--config-file",
-    type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False, path_type=Path),
     help=f"config file [~./{USER_CONFIG_FILENAME}]",
 )
 @click.option(
