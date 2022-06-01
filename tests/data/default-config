@@ -1,7 +1,7 @@
 [aws]
 access_key=SET_AWS_ACCESS_KEY_ID
 secret_key=SET_AWS_SECRET_ACCESS_KEY
-region=us-west-2
+region=SET_AWS_REGION
 mfa_enabled=False
 #mfa_secret=...
 #mfa_token_duration=...
