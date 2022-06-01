@@ -16,7 +16,7 @@ header = f"{__name__.split('.')[0]} v{__version__} {__timestamp__}"
 @click.version_option(message=header)
 @click.option(
     "-c",
-    "--config_file",
+    "--config-file",
     type=click.Path(dir_okay=False),
     help=f"config file [~./{USER_CONFIG_FILENAME}]",
 )
